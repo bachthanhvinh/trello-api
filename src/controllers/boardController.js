@@ -1,18 +1,12 @@
 import { StatusCodes } from 'http-status-codes'
-
-const createNew = (req, res, next) => {
+import { boardService } from '~/services/boardService'
+const createNew = async (req, res, next) => {
   try {
-    // console.log('res.body:', req.body)
-    // console.log('res.query:', req.query)
-    // console.log('req.params:', req.params)
-    // console.log('req.files:', req.files)
-    // console.log('req.cookies:', req.cookies)
-    // console.log('req.jwtDecoded:', req.jwtDecoded)
-
     // Điều hướng dữ liệu sang tầng Service
+    const createBoard = await boardService.createNew(req.body)
 
     // Có kết quả thì trả về phía Clinet
-    res.status(StatusCodes.CREATED).json({ message: 'Post: API Create new board' })
+    res.status(StatusCodes.CREATED).json(createBoard)
   } catch (error) { next(error) }
 }
 
