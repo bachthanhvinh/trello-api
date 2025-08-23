@@ -1,8 +1,10 @@
+/* eslint-disable no-useless-catch */
 import { slugify } from '~/utils/formatters'
 import { boardModel } from '~/models/boardModel'
+import ApiError from '~/utils/ApiError'
+import { StatusCodes } from 'http-status-codes'
 
 const createNew = async (reqBody) => {
-  // eslint-disable-next-line no-useless-catch
   try {
     const newBoard = {
       ...reqBody,
@@ -11,11 +13,22 @@ const createNew = async (reqBody) => {
     // gọi  tới tầng Model để xử lý lưu bản ghi newBoard vao trong Database
     const createBoard = await boardModel.createNew(newBoard)
     // lấy bản khi board sau ghi gọi
-    const getNewBoard = await boardModel.findOneBoardId(createBoard.insertedId.toString())
+    const getNewBoard = await boardModel.findOneBoardId(createBoard.insertedId)
     return getNewBoard
+  } catch (error) { throw error }
+}
+const getDetails= async (boardId) => {
+  try {
+    const board = await boardModel.getDetails(boardId)
+
+    if (!board) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'NOT FOUND')
+    }
+    return board
   } catch (error) { throw error }
 }
 
 export const boardService = {
-  createNew
+  createNew,
+  getDetails
 }
