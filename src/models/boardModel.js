@@ -25,7 +25,6 @@ const validateBeforeCreate = async (data) => {
 const createNew = async (data) => {
   try {
     const validate = await validateBeforeCreate(data)
-
     return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validate)
   } catch (error) { throw new Error(error) }
 }
@@ -40,10 +39,18 @@ const findOneBoardId = async (id) => {
     throw new Error(error)
   }
 }
+const getDetails = async (id) => {
+  try {
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createNew,
-  findOneBoardId
+  findOneBoardId,
+  getDetails
 }
