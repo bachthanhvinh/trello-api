@@ -5,7 +5,6 @@ import { BOARD_TYPES } from '~/utils/constants'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 import { columnModel } from './columnModel'
 import { cardModel } from './cardModel'
-import { boardValidation } from '~/validations/boardValidation'
 
 const BOARD_COLLECTION_NAME = 'boards'
 const BOARD_COLLECTION_SCHEMA = Joi.object({
@@ -69,7 +68,7 @@ const getDetails = async (id) => {
       }
     ]).toArray()
 
-    return result[0] || {}
+    return result[0] || null
   } catch (error) {
     throw new Error(error)
   }
