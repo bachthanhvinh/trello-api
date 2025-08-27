@@ -29,11 +29,13 @@ const validateBeforeCreate = async (data) => {
 const createNew = async (data) => {
   try {
     const validate = await validateBeforeCreate(data)
-    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validate)
+
+    const createBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validate)
+    return createBoard
   } catch (error) { throw new Error(error) }
 }
 
-const findOneBoardId = async (id) => {
+const findOneById = async (id) => {
   try {
     return await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({
       // xử lý khi mà id không phải là ObjectId và là string thì có bước này sẽ đổi thành ObjectId
@@ -43,6 +45,7 @@ const findOneBoardId = async (id) => {
     throw new Error(error)
   }
 }
+
 const getDetails = async (id) => {
   try {
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
@@ -74,10 +77,22 @@ const getDetails = async (id) => {
   }
 }
 
+const pushColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(column.boardId) },
+      { $push: { columnOrderIds: new ObjectId(column._id) } },
+      { returnDocument: 'after' }
+    )
+    return result.value || null
+  } catch (error) { throw new Error(error) }
+
+}
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createNew,
-  findOneBoardId,
-  getDetails
+  findOneById,
+  getDetails,
+  pushColumnOrderIds
 }
