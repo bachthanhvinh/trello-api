@@ -18,6 +18,7 @@ const createNew = async (reqBody) => {
     return getNewBoard
   } catch (error) { throw error }
 }
+
 const getDetails= async (boardId) => {
   try {
     const board = await boardModel.getDetails(boardId)
@@ -36,7 +37,23 @@ const getDetails= async (boardId) => {
   } catch (error) { throw error }
 }
 
+
+const update= async (boardId, reqBody) => {
+  try {
+    const updateData = {
+      ...reqBody,
+      updatedAt: Date.now()
+    }
+
+
+    const result = await boardModel.update(boardId, updateData)
+    return result
+  } catch (error) { throw error}
+}
+
+
 export const boardService = {
   createNew,
-  getDetails
+  getDetails,
+  update
 }
