@@ -51,7 +51,34 @@ const update = async (req, res, next) => {
   }
 }
 
+const moveCardToDifferentColumn = async (req, res, next) => {
+  const correctCondition = Joi.object({
+    currentCard: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+
+    prevOldColumns: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+    prevCardOrderIds: Joi.array().required().items(
+      Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+    ),
+
+    nextColumns: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+    nextCardOrderIds: Joi.array().required().items(
+      Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+    )
+  })
+
+  try {
+    // chỉ định abortEarly: fasle để trả về toàn bộ lỗi validation
+    // allowUnknown để bảo qua không check những trường từ bên ngoài khác title, description, type
+    await correctCondition.validateAsync(req.body, { abortEarly: false })
+    // Validate dữ liệu xong xuôi hợp lệ thì cho request đi tiếp sang controller
+    next()
+  } catch (error) {
+    next(new ApiError( StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message ))
+  }
+}
+
 export const boardValidation = {
   createNew,
-  update
+  update,
+  moveCardToDifferentColumn
 }
